@@ -12,6 +12,22 @@ const editProfileForm = document.querySelector('.popup_type_edit');
 const newPlacePopup = document.querySelector('.popup_type_new-card');
 const cardImagePopup = document.querySelector('.popup_type_image');
 const popupCloseButtons = document.querySelectorAll('.popup__close');
+const name = document.querySelector('.profile__title');
+const profession = document.querySelector('.profile__description');
+const fillName = editProfileForm.querySelector('.popup__input_type_name');
+const fillDescription = editProfileForm.querySelector('.popup__input_type_description');
+
+function handleFormSubmit(evt) {
+  evt.preventDefault(); 
+  name.textContent = fillName.value;
+  profession.textContent = fillDescription.value;
+  closeModal(editProfileForm);
+}
+
+function fillProfile () {
+  fillName.value = name.textContent;
+  fillDescription.value = profession.textContent;
+}
 
 function showCard(card, deleteCard) {
   const cardElement = createCard(card, deleteCard, imagePopupOpen);
@@ -30,7 +46,15 @@ export function imagePopupOpen(card) {
 };
 
 function setEventListenerOpenModal(button, popup) {
-  button.addEventListener('click', () => openModal(popup))
+  if (popup === editProfileForm) {
+    button.addEventListener('click', function(){
+      openModal(popup);
+      fillProfile();
+    })
+  }
+  else {
+    button.addEventListener('click', () => openModal(popup));
+  }
 };
 
 function setCloseModalEventListener(popupCloseButton) {  
@@ -40,6 +64,8 @@ function setCloseModalEventListener(popupCloseButton) {
     closeModal(popup);
   });
 }
+
+editProfileForm.addEventListener('submit', handleFormSubmit);
 
 popupCloseButtons.forEach(setCloseModalEventListener);
 

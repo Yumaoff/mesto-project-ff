@@ -3,6 +3,7 @@ import {
   typeCardName,
   newPlacePopup,
   cardList,
+  cardTemplate,
   imagePopupOpen,
   clearFormInputs,
 } from "./index.js";
@@ -13,7 +14,6 @@ function deleteCard(element) {
 }
 
 function createCard(card, deleteCard, imagePopupOpen, likeCard) {
-  const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardDeleteButton = cardElement.querySelector(".card__delete-button");
   const cardImage = cardElement.querySelector(".card__image");

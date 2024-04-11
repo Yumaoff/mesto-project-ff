@@ -27,6 +27,7 @@ const typeCardName = newPlacePopup.querySelector(
   ".popup__input_type_card-name"
 );
 const typeCardLink = newPlacePopup.querySelector(".popup__input_type_url");
+const cardTemplate = document.querySelector("#card-template").content;
 
 function handleFormSubmit(evt) {
   evt.preventDefault();
@@ -85,9 +86,6 @@ newPlacePopup.addEventListener("submit", addNewCard);
 
 popupCloseButtons.forEach(setCloseModalEventListener);
 
-document.addEventListener("mousedown", closeModalOnOverlayClick);
-document.addEventListener("keydown", closeModalOnEscape);
-
 setEventListenerOpenModal(editProfileButton, editProfileForm);
 setEventListenerOpenModal(newPlaceButton, newPlacePopup);
 
@@ -95,6 +93,7 @@ export {
   typeCardLink,
   typeCardName,
   newPlacePopup,
+  cardTemplate,
   showCard,
   cardList,
   clearFormInputs,

@@ -1,4 +1,7 @@
+import { clearValidation, validationSettings } from "./validation.js";
+
 function openModal(modalForm) {
+  clearValidation(modalForm, validationSettings);
   modalForm.classList.add("popup_is-opened");
   document.addEventListener("mousedown", closeModalOnOverlayClick);
   document.addEventListener("keydown", closeModalOnEscape);

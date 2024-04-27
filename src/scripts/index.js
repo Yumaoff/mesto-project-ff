@@ -4,10 +4,11 @@ import { addNewCard, createCard, deleteCard, likeCard } from "./card.js";
 import {
   openModal,
   closeModal,
-  closeModalOnOverlayClick,
-  closeModalOnEscape,
 } from "./modal.js";
+import { enableValidation, validationSettings, toggleButtonState} from "./validation.js";
 
+const cardNameInput = document.querySelector(".popup__input_type_card-name");
+const cardUrlInput = document.querySelector(".popup__input_type_url");
 const cardList = document.querySelector(".places__list");
 const editProfileButton = document.querySelector(".profile__edit-button");
 const newPlaceButton = document.querySelector(".profile__add-button");
@@ -44,6 +45,10 @@ function fillProfile() {
 function clearFormInputs(nameInput, linkInput) {
   nameInput.value = "";
   linkInput.value = "";
+  const formElement = nameInput.form;
+  const inputList = Array.from(formElement.querySelectorAll(validationSettings.inputSelector));
+  const buttonElement = formElement.querySelector(validationSettings.submitButtonSelector);
+  toggleButtonState(inputList, buttonElement, validationSettings);
 }
 
 function showCard(card, deleteCard) {
@@ -68,7 +73,14 @@ function setEventListenerOpenModal(button, popup) {
       openModal(popup);
       fillProfile();
     });
-  } else {
+  }
+  else if (popup === newPlacePopup) {
+    button.addEventListener("click", function () {
+      clearFormInputs(cardNameInput, cardUrlInput);
+      openModal(popup);
+    });
+  }
+  else {
     button.addEventListener("click", () => openModal(popup));
   }
 }
@@ -87,7 +99,7 @@ newPlacePopup.addEventListener("submit", addNewCard);
 popupCloseButtons.forEach(setCloseModalEventListener);
 
 setEventListenerOpenModal(editProfileButton, editProfileForm);
-setEventListenerOpenModal(newPlaceButton, newPlacePopup);
+setEventListenerOpenModal(newPlaceButton, newPlacePopup, newPlaceButton);
 
 export {
   typeCardLink,
@@ -99,3 +111,5 @@ export {
   clearFormInputs,
   imagePopupOpen,
 };
+
+enableValidation(validationSettings); 

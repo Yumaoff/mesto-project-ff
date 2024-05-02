@@ -13,7 +13,7 @@ function deleteCard(element) {
   element.remove();
 }
 
-function createCard(card, deleteCard, imagePopupOpen, likeCard) {
+function createCard(card, deleteCard, imagePopupOpen, likeCard, userInfo) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardDeleteButton = cardElement.querySelector(".card__delete-button");
   const cardImage = cardElement.querySelector(".card__image");

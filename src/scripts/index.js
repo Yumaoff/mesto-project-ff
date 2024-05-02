@@ -6,7 +6,9 @@ import {
   closeModal,
 } from "./modal.js";
 import { enableValidation, validationSettings, toggleButtonState} from "./validation.js";
+import {getUserInfoApi, getCardsApi} from "./api.js";
 
+//используемые переменные
 const cardNameInput = document.querySelector(".popup__input_type_card-name");
 const cardUrlInput = document.querySelector(".popup__input_type_url");
 const cardList = document.querySelector(".places__list");
@@ -20,6 +22,7 @@ const cardImagePopup = document.querySelector(".popup_type_image");
 const popupCloseButtons = document.querySelectorAll(".popup__close");
 const name = document.querySelector(".profile__title");
 const profession = document.querySelector(".profile__description");
+const avatar = document.querySelector(".profile__image");
 const fillName = editProfileForm.querySelector(".popup__input_type_name");
 const fillDescription = editProfileForm.querySelector(
   ".popup__input_type_description"
@@ -29,6 +32,26 @@ const typeCardName = newPlacePopup.querySelector(
 );
 const typeCardLink = newPlacePopup.querySelector(".popup__input_type_url");
 const cardTemplate = document.querySelector("#card-template").content;
+
+//функции работы с попапами
+
+Promise.all([getCardsApi(), getUserInfoApi()])
+.then(([cards, userInfo]) => {
+  console.log("Карточки: ", cards);
+  console.log("Данные пользователя: ", userInfo);
+  refreshProfileData(userInfo);
+  cards.forEach(card => showCard(card, deleteCard, imagePopupOpen, likeCard, userInfo));
+})
+.catch(error => {
+  console.error("Ошибка при загрузке картчоек или получении данных о пользователе: ", error);
+
+})
+
+function refreshProfileData (userInfo) {
+  name.textContent = userInfo.name;
+  profession.textContent = userInfo.about;
+  avatar.style.backgroundImage = `url(${userInfo.avatar})`;
+}
 
 function handleFormSubmit(evt) {
   evt.preventDefault();
@@ -54,10 +77,6 @@ function clearFormInputs(nameInput, linkInput) {
 function showCard(card, deleteCard) {
   const cardElement = createCard(card, deleteCard, imagePopupOpen, likeCard);
   cardList.append(cardElement);
-}
-
-for (let i = 0; i < initialCards.length; i++) {
-  showCard(initialCards[i], deleteCard);
 }
 
 function imagePopupOpen(card) {
@@ -93,6 +112,7 @@ function setCloseModalEventListener(popupCloseButton) {
   });
 }
 
+//вызовы
 editProfileForm.addEventListener("submit", handleFormSubmit);
 newPlacePopup.addEventListener("submit", addNewCard);
 

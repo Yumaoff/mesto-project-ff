@@ -29,4 +29,18 @@ const getCardsApi = () => {
   })
 }
 
-export {getUserInfoApi, getCardsApi};
+const editProfileApi = (name, about) => {
+  return fetch('https://nomoreparties.co/v1/wff-cohort-12/users/me', {
+    method: 'PATCH',
+    headers: {
+      authorization: '5611efb9-d8eb-47cc-991d-f60206142d72',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: name,
+      about: about
+    })
+  })
+}
+
+export {getUserInfoApi, getCardsApi, editProfileApi};

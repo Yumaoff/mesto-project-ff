@@ -6,7 +6,7 @@ import {
   closeModal,
 } from "./modal.js";
 import { enableValidation, validationSettings, toggleButtonState} from "./validation.js";
-import {getUserInfoApi, getCardsApi} from "./api.js";
+import {getUserInfoApi, getCardsApi, editProfileApi} from "./api.js";
 
 //используемые переменные
 const cardNameInput = document.querySelector(".popup__input_type_card-name");
@@ -33,12 +33,8 @@ const typeCardName = newPlacePopup.querySelector(
 const typeCardLink = newPlacePopup.querySelector(".popup__input_type_url");
 const cardTemplate = document.querySelector("#card-template").content;
 
-//функции работы с попапами
-
 Promise.all([getCardsApi(), getUserInfoApi()])
 .then(([cards, userInfo]) => {
-  console.log("Карточки: ", cards);
-  console.log("Данные пользователя: ", userInfo);
   refreshProfileData(userInfo);
   cards.forEach(card => showCard(card, deleteCard, imagePopupOpen, likeCard, userInfo));
 })
@@ -55,9 +51,21 @@ function refreshProfileData (userInfo) {
 
 function handleFormSubmit(evt) {
   evt.preventDefault();
-  name.textContent = fillName.value;
-  profession.textContent = fillDescription.value;
-  closeModal(editProfileForm);
+
+  const newName = fillName.value;
+  const newAbout = fillDescription.value;
+
+  editProfileApi(newName, newAbout)
+    .then(() => {
+      return getUserInfoApi();
+    })
+    .then(userInfo => {
+      refreshProfileData(userInfo);
+      closeModal(editProfileForm);
+    })
+    .catch(error => {
+      console.error("Ошибка при обновлении профиля: ", error);
+    });
 }
 
 function fillProfile() {
@@ -112,7 +120,6 @@ function setCloseModalEventListener(popupCloseButton) {
   });
 }
 
-//вызовы
 editProfileForm.addEventListener("submit", handleFormSubmit);
 newPlacePopup.addEventListener("submit", addNewCard);
 

@@ -6,7 +6,7 @@ import {
   closeModal,
 } from "./modal.js";
 import { enableValidation, validationSettings, toggleButtonState} from "./validation.js";
-import {getUserInfoApi, getCardsApi, editProfileApi} from "./api.js";
+import {getUserInfoApi, getCardsApi, editProfileApi, addCardApi} from "./api.js";
 
 //используемые переменные
 const cardNameInput = document.querySelector(".popup__input_type_card-name");
@@ -34,14 +34,13 @@ const typeCardLink = newPlacePopup.querySelector(".popup__input_type_url");
 const cardTemplate = document.querySelector("#card-template").content;
 
 Promise.all([getCardsApi(), getUserInfoApi()])
-.then(([cards, userInfo]) => {
-  refreshProfileData(userInfo);
-  cards.forEach(card => showCard(card, deleteCard, imagePopupOpen, likeCard, userInfo));
-})
-.catch(error => {
-  console.error("Ошибка при загрузке картчоек или получении данных о пользователе: ", error);
-
-})
+  .then(([cards, userInfo]) => {
+    refreshProfileData(userInfo);
+    cards.forEach(card => showCard(card, deleteCard, imagePopupOpen, likeCard));
+  })
+  .catch(error => {
+    console.error("Ошибка при загрузке картчоек или получении данных о пользователе: ", error);
+  });
 
 function refreshProfileData (userInfo) {
   name.textContent = userInfo.name;

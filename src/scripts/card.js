@@ -53,6 +53,7 @@ function createCard(card, deleteCard, imagePopupOpen, likeCard, userInfo) {
 
 function addNewCard(evt) {
   evt.preventDefault();
+  evt.submitter.textContent = 'Сохранение...';
 
   const newCard = {
     name: typeCardName.value,
@@ -79,7 +80,10 @@ function addNewCard(evt) {
     })
     .catch((error) => {
       console.error("Ошибка при добавлении карточки: ", error)
-    });
+    })
+    .finally(() => {
+      evt.submitter.textContent = 'Сохранить';
+  });
 }
 
 function likeCard(evt, cardElement) {

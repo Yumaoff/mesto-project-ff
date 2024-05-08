@@ -89,4 +89,18 @@ const unlikeApi = (id) => {
   });
 }
 
-export {getUserInfoApi, getCardsApi, editProfileApi, addCardApi, deleteCardApi, likeApi, unlikeApi};
+const changeAvatarApi = (link) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: link
+    })
+  })
+  .then(isOk)
+  .catch(error => {
+    console.error("Ошибка при смене аватара: ", error);
+  });
+}
+
+export {getUserInfoApi, getCardsApi, editProfileApi, addCardApi, deleteCardApi, likeApi, unlikeApi, changeAvatarApi};

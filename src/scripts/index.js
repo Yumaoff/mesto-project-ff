@@ -5,7 +5,7 @@ import {
   closeModal,
 } from "./modal.js";
 import { enableValidation, validationSettings, toggleButtonState} from "./validation.js";
-import {getUserInfoApi, getCardsApi, editProfileApi} from "./api.js";
+import {getUserInfoApi, getCardsApi, editProfileApi, changeAvatarApi} from "./api.js";
 
 //используемые переменные
 const cardNameInput = document.querySelector(".popup__input_type_card-name");
@@ -15,6 +15,8 @@ const editProfileButton = document.querySelector(".profile__edit-button");
 const newPlaceButton = document.querySelector(".profile__add-button");
 const popupImage = document.querySelector(".popup__image");
 const popupCaption = document.querySelector(".popup__caption");
+const changeAvatarPopup = document.querySelector('.popup_type_change-avatar');
+const newAvatarLink = document.querySelector('#avatar-input');
 const editProfileForm = document.querySelector(".popup_type_edit");
 const newPlacePopup = document.querySelector(".popup_type_new-card");
 const cardImagePopup = document.querySelector(".popup_type_image");
@@ -49,6 +51,7 @@ function refreshProfileData (userInfo) {
 
 function handleFormSubmit(evt) {
   evt.preventDefault();
+  evt.submitter.textContent = 'Сохранение...';
 
   const newName = fillName.value;
   const newAbout = fillDescription.value;
@@ -63,7 +66,10 @@ function handleFormSubmit(evt) {
     })
     .catch(error => {
       console.error("Ошибка при обновлении профиля: ", error);
-    });
+    })
+    .finally(() => {
+      evt.submitter.textContent = 'Сохранить';
+  });
 }
 
 function fillProfile() {
@@ -124,13 +130,38 @@ function setCloseModalEventListener(popupCloseButton) {
   });
 }
 
+function changeAvatarLocal (avatarLink) {
+  avatar.style.backgroundImage = `url(${avatarLink})`;
+}
+
+function changeAvatar (evt) {
+  evt.preventDefault();
+  evt.submitter.textContent = 'Сохранение...';
+
+  const newAvatar = newAvatarLink.value;
+
+  changeAvatarApi(newAvatar)
+    .then(res => {
+      changeAvatarLocal(res.avatar);
+      closeModal(changeAvatarPopup);
+    })
+    .catch((error) => {
+      console.error('Ошибка при смене аватара: ', error)
+    })
+    .finally(() => {
+      evt.submitter.textContent = 'Сохранить';
+  });
+}
+
 editProfileForm.addEventListener("submit", handleFormSubmit);
 newPlacePopup.addEventListener("submit", addNewCard);
+changeAvatarPopup.addEventListener("submit", changeAvatar);
 
 popupCloseButtons.forEach(setCloseModalEventListener);
 
 setEventListenerOpenModal(editProfileButton, editProfileForm);
 setEventListenerOpenModal(newPlaceButton, newPlacePopup, newPlaceButton);
+setEventListenerOpenModal(avatar, changeAvatarPopup);
 
 export {
   typeCardLink,

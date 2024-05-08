@@ -1,86 +1,92 @@
+const config = {
+  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-12',
+  headers: {
+    authorization: '5611efb9-d8eb-47cc-991d-f60206142d72',
+    'Content-Type': 'application/json'
+  }
+}
 
+function isOk(res) {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка запроса: ${res.status}`);
+}
 
 const getUserInfoApi = () => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-12/users/me', {
+  return fetch(`${config.baseUrl}/users/me`, {
     method: 'GET',
-    headers: {
-      authorization: '5611efb9-d8eb-47cc-991d-f60206142d72'
-    }
+    headers: config.headers
   })
-  .then(res => {
-    if (!res.ok) {
-      throw new Error(`Ошибка: ${res.status}`);
-    }
-    return res.json();
-  })
-  .then((result) => {
-    console.log(result);
-    return result;
-  })
+  .then(isOk)
   .catch(error => {
     console.error("Ошибка при получении информации о пользователе: ", error);
   });
 };
 
 const getCardsApi = () => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-12/cards', {
+  return fetch(`${config.baseUrl}/cards`, {
     method: 'GET',
-    headers: {
-      authorization: '5611efb9-d8eb-47cc-991d-f60206142d72'
-    }
+    headers: config.headers
   })
-  .then(res => {
-    if (!res.ok) {
-      throw new Error(`Ошибка: ${res.status}`);
-    }
-    return res.json();
-  })
-  .then((result) => {
-    console.log(result);
-    return result;
-  })
+  .then(isOk)
   .catch(error => {
     console.error("Ошибка при получении списка карточек: ", error);
   });
 };
 
 const editProfileApi = (name, about) => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-12/users/me', {
+  return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
-    headers: {
-      authorization: '5611efb9-d8eb-47cc-991d-f60206142d72',
-      'Content-Type': 'application/json'
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: name,
       about: about
     })
   })
+  .then(isOk);
 }
 
 const addCardApi = (name, link) => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-12/cards ', {
+  return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
-    headers: {
-      authorization: '5611efb9-d8eb-47cc-991d-f60206142d72',
-      'Content-Type': 'application/json'
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: name,
       link: link
     })
   })
+  .then(isOk);
 }
 
 const deleteCardApi = (id) => {
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-12/cards/${id}`, {
+  return fetch(`${config.baseUrl}/cards/${id}`, {
     method: 'DELETE',
-    headers: {
-      authorization: '5611efb9-d8eb-47cc-991d-f60206142d72'
-    }
+    headers: config.headers
   })
+  .then(isOk);
 }
 
+const likeApi = (id) => {
+  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
+    method: 'PUT',
+    headers: config.headers
+  })
+  .then(isOk)
+  .catch(error => {
+    console.error("Ошибка при постановке лайка: ", error);
+  });
+}
 
+const unlikeApi = (id) => {
+  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
+    method: 'DELETE',
+    headers: config.headers
+  })
+  .then(isOk)
+  .catch(error => {
+    console.error("Ошибка при снятии лайка: ", error);
+  });
+}
 
-export {getUserInfoApi, getCardsApi, editProfileApi, addCardApi, deleteCardApi};
+export {getUserInfoApi, getCardsApi, editProfileApi, addCardApi, deleteCardApi, likeApi, unlikeApi};

@@ -1,12 +1,11 @@
 import "../pages/index.css";
-import { initialCards } from "./cards.js";
 import { addNewCard, createCard, deleteCard, likeCard } from "./card.js";
 import {
   openModal,
   closeModal,
 } from "./modal.js";
 import { enableValidation, validationSettings, toggleButtonState} from "./validation.js";
-import {getUserInfoApi, getCardsApi, editProfileApi, addCardApi} from "./api.js";
+import {getUserInfoApi, getCardsApi, editProfileApi} from "./api.js";
 
 //используемые переменные
 const cardNameInput = document.querySelector(".popup__input_type_card-name");
@@ -36,7 +35,7 @@ const cardTemplate = document.querySelector("#card-template").content;
 Promise.all([getCardsApi(), getUserInfoApi()])
   .then(([cards, userInfo]) => {
     refreshProfileData(userInfo);
-    cards.forEach(card => showCard(card, deleteCard, imagePopupOpen, likeCard));
+    cards.forEach(card => showCard(card, deleteCard, imagePopupOpen, likeCard, userInfo));
   })
   .catch(error => {
     console.error("Ошибка при загрузке картчоек или получении данных о пользователе: ", error);
@@ -81,10 +80,16 @@ function clearFormInputs(nameInput, linkInput) {
   toggleButtonState(inputList, buttonElement, validationSettings);
 }
 
-function showCard(card, deleteCard) {
-  const cardElement = createCard(card, deleteCard, imagePopupOpen, likeCard);
+function showCard(card, deleteCard, imagePopupOpen, likeCard, userInfo) {
+  const cardElement = createCard(card, deleteCard, imagePopupOpen, likeCard, userInfo);
+  if (card.likes.some(like => like._id === userInfo._id)) {
+    const likeButton = cardElement.querySelector(".card__like-button");
+    likeButton.classList.add("card__like-button_is-active");
+  }
+  
   cardList.append(cardElement);
 }
+
 
 function imagePopupOpen(card) {
   openModal(cardImagePopup);

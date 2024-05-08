@@ -11,15 +11,17 @@ import {
 import { closeModal } from "./modal.js";
 import { addCardApi, deleteCardApi, likeApi, unlikeApi } from "./api.js";
 
+// удаление карточки
 function deleteCard(card) {
   card.remove();
   deleteCardApi(card.id)
-    .then(res => console.log(res))
+    .then((res) => console.log(res))
     .catch((error) => {
-      console.error("Ошибка при удалении карточки: ", error)
-    })
+      console.error("Ошибка при удалении карточки: ", error);
+    });
 }
 
+// создание карточек
 function createCard(card, deleteCard, imagePopupOpen, likeCard, userInfo) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardDeleteButton = cardElement.querySelector(".card__delete-button");
@@ -51,23 +53,24 @@ function createCard(card, deleteCard, imagePopupOpen, likeCard, userInfo) {
   return cardElement;
 }
 
+// добавление новой карточки
 function addNewCard(evt) {
   evt.preventDefault();
-  evt.submitter.textContent = 'Сохранение...';
+  evt.submitter.textContent = "Сохранение...";
 
   const newCard = {
     name: typeCardName.value,
     link: typeCardLink.value,
-    likes: []
+    likes: [],
   };
 
   addCardApi(newCard.name, newCard.link, newCard.likes)
-    .then(res => {
+    .then((res) => {
       closeModal(newPlacePopup);
       clearFormInputs(typeCardName, typeCardLink);
-      return res; 
+      return res;
     })
-    .then(newCardData => {
+    .then((newCardData) => {
       const newCardElement = createCard(
         newCardData,
         deleteCard,
@@ -79,33 +82,39 @@ function addNewCard(evt) {
       cardList.insertBefore(newCardElement, firstCard);
     })
     .catch((error) => {
-      console.error("Ошибка при добавлении карточки: ", error)
+      console.error("Ошибка при добавлении карточки: ", error);
     })
     .finally(() => {
-      evt.submitter.textContent = 'Сохранить';
-  });
+      evt.submitter.textContent = "Сохранить";
+    });
 }
 
+// функция установки и снятия лайка
 function likeCard(evt, cardElement) {
-  if (evt.target.classList.contains('card__like-button_is-active')&& evt.target.classList.contains('card__like-button')) {
-    evt.target.classList.toggle('card__like-button_is-active');
+  if (
+    evt.target.classList.contains("card__like-button_is-active") &&
+    evt.target.classList.contains("card__like-button")
+  ) {
+    evt.target.classList.toggle("card__like-button_is-active");
     unlikeApi(cardElement.id)
-      .then(res => {
+      .then((res) => {
         console.log(res);
-        cardElement.querySelector('.card__likes-amount').textContent = res.likes.length;
+        cardElement.querySelector(".card__likes-amount").textContent =
+          res.likes.length;
       })
       .catch((error) => {
-        console.error('Ошибка лайка: ', error);
+        console.error("Ошибка лайка: ", error);
       });
-  } else if (evt.target.classList.contains('card__like-button')) {
-    evt.target.classList.toggle('card__like-button_is-active');
+  } else if (evt.target.classList.contains("card__like-button")) {
+    evt.target.classList.toggle("card__like-button_is-active");
     likeApi(cardElement.id)
-      .then(res => {
+      .then((res) => {
         console.log(res);
-        cardElement.querySelector('.card__likes-amount').textContent = res.likes.length;
+        cardElement.querySelector(".card__likes-amount").textContent =
+          res.likes.length;
       })
       .catch((error) => {
-        console.error('Ошибка снятия лайка: ', error);
+        console.error("Ошибка снятия лайка: ", error);
       });
   }
 }
